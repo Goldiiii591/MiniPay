@@ -1,6 +1,39 @@
 # 💳 MiniPay
 
-A simplified payment system backend built with **Node.js**, **Express**, and **SQLite (`better-sqlite3`)**.
+A simplified payment system backend and web UI built with **Node.js**, **Express**, **SQLite (`better-sqlite3`)**, and **vanilla HTML/CSS/JavaScript**.
+
+---
+
+## 🖥️ Web UI (Frontend)
+
+MiniPay comes with a clean, responsive single-page frontend served directly by Express from the `public/` directory (no external frontend frameworks required).
+
+### How to Open the Web Page
+1. Start the MiniPay server:
+   ```bash
+   npm start
+   # or with auto-reload:
+   npm run dev
+   ```
+2. Open your web browser and navigate to:
+   ```text
+   http://localhost:3000
+   ```
+
+### Frontend Capabilities
+- **Authentication**: Seamless tabs to sign up (with automatic wallet provisioning) or log in. JWT tokens are stored securely in `localStorage`.
+- **Live Balance**: Displays wallet balance formatted in Rupees (e.g. `₹50.00`) alongside the exact underlying integer paise (`5,000 paise`).
+- **Add Money**: Accepts amount in Rupees (with quick chips like `+₹100`, `+₹500`), provides a live preview, and converts to integer paise before sending to `/wallet/add-money`.
+- **Send Money with Idempotency**:
+  - Automatically generates an `Idempotency-Key` using `crypto.randomUUID()` once per form submission.
+  - If a submission fails (e.g., insufficient funds or network glitch), the UI preserves the exact same key and provides a **"Retry Transfer with Same Key"** button, preventing duplicate debits.
+  - If the user changes the recipient email or amount, a new key is generated for the new intent.
+- **Transfer History**: Automatically refreshed table showing:
+  - Direction (`📤 Sent` vs `📥 Received`)
+  - Counterparty email (`To: ...` / `From: ...`)
+  - Amount in Rupees (`- ₹30.00` / `+ ₹30.00`)
+  - Status badges (`✓ SUCCESS`, `✗ FAILED`)
+  - Formatted timestamp & idempotency key reference
 
 ---
 
@@ -10,7 +43,8 @@ A simplified payment system backend built with **Node.js**, **Express**, and **S
 In financial systems, floating-point numbers (IEEE 754 standard) are strictly forbidden because computers cannot represent decimal fractions precisely (e.g., `0.1 + 0.2 === 0.30000000000000004`). Over millions of transactions, rounding errors create audit mismatches and lost money.
 - MiniPay stores all monetary values as **positive integers** representing **paise** ($1\text{ INR} = 100\text{ paise}$).
 - For example, ₹50.00 is stored and processed as `5000`.
-- Decimal and float inputs are rejected at the validation layer with `400 Bad Request`.
+- The frontend UI converts user inputs in decimal Rupees into integer paise (`Math.round(rupees * 100)`) before sending payloads to the API.
+- Decimal and float inputs are rejected at the backend validation layer with `400 Bad Request`.
 
 ### 2. Double-Entry Ledger System
 A wallet's `balance_in_paise` is a mutable cached aggregate. If a dispute or database corruption occurs, you cannot reconstruct how a balance was reached from a single column.
@@ -45,9 +79,13 @@ A wallet's `balance_in_paise` is a mutable cached aggregate. If a dispute or dat
 
 ```text
 minipay/
+├── public/                    # Frontend UI (Vanilla HTML/CSS/JS)
+│   ├── index.html             # Single-page UI with auth, wallet & transfer panels
+│   ├── styles.css             # Modern fintech styles, alerts, and badges
+│   └── app.js                 # State, paise conversion, idempotency retry logic
 ├── src/
 │   ├── config.js              # Centralized environment configuration
-│   ├── app.js                 # Express app definition & global middlewares
+│   ├── app.js                 # Express app definition, static file serving & middlewares
 │   ├── server.js              # Bootstraps database schema and starts HTTP listener
 │   ├── db/
 │   │   ├── connection.js      # better-sqlite3 singleton with WAL mode & foreign keys
@@ -58,7 +96,7 @@ minipay/
 │   │   └── errorHandler.js    # Global error handler and SQLite error translation
 │   ├── services/
 │   │   ├── authService.js     # User registration, bcrypt password hashing, login & JWT
-│   │   ├── walletService.js   # Atomic transactions for balance top-ups & ledger logging
+│   │   └── walletService.js   # Atomic transactions for balance top-ups & ledger logging
 │   │   └── transferService.js # P2P transfers, idempotency check, failed attempts, and history
 │   └── routes/
 │       ├── authRoutes.js      # POST /signup, POST /login
@@ -111,7 +149,7 @@ minipay/
   npm run dev
   ```
 
-The server will initialize the SQLite tables automatically and listen on `http://localhost:3000`.
+The server will initialize the SQLite tables automatically and listen on `http://localhost:3000`. You can open `http://localhost:3000` directly in any modern browser.
 
 ### Running Tests
 
