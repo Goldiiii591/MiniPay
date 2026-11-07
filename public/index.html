@@ -5,20 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MiniPay — Simplified Payment System</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="app-container">
-    <!-- TOP NAVIGATION -->
+    <!-- TOP NAVIGATION / HEADER BAR -->
     <header class="navbar">
       <div class="nav-brand">
-        <span class="brand-logo">💳</span>
-        <div class="brand-text">
-          <h1>MiniPay</h1>
-          <p class="tagline">Accurate, Ledger-Backed Payment System</p>
-        </div>
+        <h1>MiniPay</h1>
       </div>
 
       <div id="nav-user-section" class="nav-user hidden">
@@ -29,14 +22,14 @@
             <span class="user-email" id="nav-user-email">user@example.com</span>
           </div>
         </div>
-        <button id="logout-btn" class="btn btn-outline btn-sm">Log Out</button>
+        <button id="logout-btn" class="btn btn-outline-light btn-sm" type="button">Log Out</button>
       </div>
     </header>
 
     <!-- GLOBAL ALERT BANNER -->
     <div id="global-alert" class="alert hidden" role="alert"></div>
 
-    <!-- 1. AUTHENTICATION VIEW (Sign In / Sign Up) -->
+    <!-- 1. AUTHENTICATION VIEW (Centered Auth Card) -->
     <main id="auth-view" class="view-section">
       <div class="auth-card">
         <div class="tabs-nav">
@@ -47,12 +40,12 @@
         <!-- LOGIN FORM -->
         <div id="login-container" class="tab-pane active">
           <h2>Welcome Back</h2>
-          <p class="section-desc">Log in with your email and password to access your wallet.</p>
+          <p class="section-desc">Sign in with your email to access your wallet.</p>
 
           <form id="login-form" novalidate>
             <div class="form-group">
               <label for="login-email">Email Address</label>
-              <input type="email" id="login-email" placeholder="e.g. arjun@example.com" required autocomplete="email">
+              <input type="email" id="login-email" placeholder="name@example.com" required autocomplete="email">
             </div>
 
             <div class="form-group">
@@ -67,23 +60,23 @@
 
         <!-- SIGNUP FORM -->
         <div id="signup-container" class="tab-pane hidden">
-          <h2>Get Started with MiniPay</h2>
-          <p class="section-desc">Create your account and we will automatically provision an active wallet with 0 balance.</p>
+          <h2>Create Account</h2>
+          <p class="section-desc">Create your wallet with 0 starting balance.</p>
 
           <form id="signup-form" novalidate>
             <div class="form-group">
               <label for="signup-name">Full Name</label>
-              <input type="text" id="signup-name" placeholder="e.g. Arjun Sharma" required autocomplete="name">
+              <input type="text" id="signup-name" placeholder="Arjun Sharma" required autocomplete="name">
             </div>
 
             <div class="form-group">
               <label for="signup-email">Email Address</label>
-              <input type="email" id="signup-email" placeholder="e.g. arjun@example.com" required autocomplete="email">
+              <input type="email" id="signup-email" placeholder="name@example.com" required autocomplete="email">
             </div>
 
             <div class="form-group">
-              <label for="signup-password">Password <small class="text-muted">(Min. 6 characters)</small></label>
-              <input type="password" id="signup-password" placeholder="Choose a secure password" minlength="6" required autocomplete="new-password">
+              <label for="signup-password">Password <span class="label-hint">(min. 6 characters)</span></label>
+              <input type="password" id="signup-password" placeholder="Choose a password" minlength="6" required autocomplete="new-password">
             </div>
 
             <button type="submit" id="signup-submit-btn" class="btn btn-primary btn-block">Create Wallet</button>
@@ -93,152 +86,141 @@
       </div>
     </main>
 
-    <!-- 2. DASHBOARD VIEW (Shown when authenticated) -->
+    <!-- 2. DASHBOARD VIEW (Desktop: Left Forms / Right History) -->
     <main id="dashboard-view" class="view-section hidden">
-      <!-- BALANCE HERO CARD -->
-      <section class="card balance-card">
-        <div class="balance-header">
-          <span class="balance-title">Available Wallet Balance</span>
-          <button id="refresh-balance-btn" class="btn-icon" title="Refresh Balance" aria-label="Refresh balance">
-            🔄
-          </button>
+      <div class="dashboard-grid">
+        
+        <!-- LEFT COLUMN: Balance Card & Forms -->
+        <div class="dashboard-left">
+          <!-- BALANCE HERO CARD (NAVY CARD) -->
+          <section class="card balance-card">
+            <div class="balance-header">
+              <span class="balance-label">Wallet balance</span>
+              <button id="refresh-balance-btn" class="btn-icon" title="Refresh Balance" aria-label="Refresh balance">🔄</button>
+            </div>
+            <div class="balance-amount" id="display-balance-inr">₹0.00</div>
+            <div class="balance-subtext">
+              Exact: <strong id="display-balance-paise">0</strong> paise
+            </div>
+          </section>
+
+          <!-- ADD MONEY FORM -->
+          <section class="card form-card">
+            <div class="card-header">
+              <h3>Add Money</h3>
+              <p>Deposit funds into your wallet.</p>
+            </div>
+
+            <form id="add-money-form">
+              <div class="form-group">
+                <label for="add-amount-inr">Amount in Rupees (₹)</label>
+                <div class="input-prefix-wrapper">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" id="add-amount-inr" placeholder="100.00" min="0.01" step="any" required>
+                </div>
+                <small class="helper-text">
+                  Sent as <span id="add-paise-preview">0</span> paise
+                </small>
+              </div>
+
+              <!-- Quick Chips -->
+              <div class="amount-chips">
+                <button type="button" class="chip" data-amount="100">+₹100</button>
+                <button type="button" class="chip" data-amount="500">+₹500</button>
+                <button type="button" class="chip" data-amount="1000">+₹1,000</button>
+                <button type="button" class="chip" data-amount="2000">+₹2,000</button>
+              </div>
+
+              <button type="submit" id="add-money-submit-btn" class="btn btn-primary btn-block">Add to Wallet</button>
+            </form>
+            <div id="add-money-alert" class="alert hidden"></div>
+          </section>
+
+          <!-- SEND MONEY FORM -->
+          <section class="card form-card">
+            <div class="card-header">
+              <h3>Send Money</h3>
+              <p>Transfer instantly to another user.</p>
+            </div>
+
+            <form id="send-money-form">
+              <div class="form-group">
+                <label for="send-to-email">Recipient Email</label>
+                <input type="email" id="send-to-email" placeholder="recipient@example.com" required autocomplete="off">
+              </div>
+
+              <div class="form-group">
+                <label for="send-amount-inr">Amount in Rupees (₹)</label>
+                <div class="input-prefix-wrapper">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" id="send-amount-inr" placeholder="50.00" min="0.01" step="any" required>
+                </div>
+                <small class="helper-text">
+                  Sent as <span id="send-paise-preview">0</span> paise
+                </small>
+              </div>
+
+              <!-- Idempotency Key Status -->
+              <div class="idempotency-box">
+                <span class="idempotency-title">Idempotency protection active</span>
+                <span class="idempotency-key-text">Key: <code id="display-idempotency-key">Auto-generated on submit</code></span>
+              </div>
+
+              <div class="send-buttons-group">
+                <button type="submit" id="send-money-submit-btn" class="btn btn-primary btn-block">
+                  Send Money
+                </button>
+                <button type="button" id="retry-send-btn" class="btn btn-warning btn-block hidden">
+                  Retry Transfer with Same Key
+                </button>
+              </div>
+            </form>
+            <div id="send-money-alert" class="alert hidden"></div>
+          </section>
         </div>
-        <div class="balance-amount-wrapper">
-          <div class="balance-amount" id="display-balance-inr">₹0.00</div>
-          <div class="balance-subtext">
-            Exact integer balance: <strong id="display-balance-paise">0</strong> paise
-          </div>
+
+        <!-- RIGHT COLUMN: Transaction History -->
+        <div class="dashboard-right">
+          <section class="card history-card">
+            <div class="history-header">
+              <div>
+                <h3>Transfer History</h3>
+                <p class="section-desc-sm">Newest transfers first.</p>
+              </div>
+              <button id="refresh-history-btn" class="btn btn-outline btn-sm" type="button">Refresh</button>
+            </div>
+
+            <div id="history-loading" class="loading-state hidden">Loading transfers...</div>
+            <div id="history-empty" class="empty-state hidden">
+              <h4>No transfers yet</h4>
+              <p>Your sent and received transactions will appear here.</p>
+            </div>
+
+            <div class="table-responsive">
+              <table id="transactions-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="transactions-list">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </section>
         </div>
-        <div class="balance-note">
-          <span>💡 MiniPay stores all money as integer paise (1 INR = 100 paise) to prevent floating-point rounding errors.</span>
-        </div>
-      </section>
 
-      <!-- TWO ACTION CARDS: ADD MONEY & SEND MONEY -->
-      <div class="grid-actions">
-        <!-- ACTION 1: ADD MONEY -->
-        <section class="card action-card">
-          <div class="card-header">
-            <h3>💰 Add Money</h3>
-            <p>Deposit funds into your own wallet.</p>
-          </div>
-
-          <form id="add-money-form">
-            <div class="form-group">
-              <label for="add-amount-inr">Amount in Rupees (₹)</label>
-              <div class="input-prefix-wrapper">
-                <span class="input-prefix">₹</span>
-                <input type="number" id="add-amount-inr" placeholder="100.00" min="0.01" step="any" required>
-              </div>
-              <small class="helper-text">
-                Will be converted to <span id="add-paise-preview">0</span> paise before sending.
-              </small>
-            </div>
-
-            <!-- Quick Amount Chips -->
-            <div class="amount-chips">
-              <button type="button" class="chip" data-amount="100">+₹100</button>
-              <button type="button" class="chip" data-amount="500">+₹500</button>
-              <button type="button" class="chip" data-amount="1000">+₹1,000</button>
-              <button type="button" class="chip" data-amount="2000">+₹2,000</button>
-            </div>
-
-            <button type="submit" id="add-money-submit-btn" class="btn btn-success btn-block">Add to Wallet</button>
-          </form>
-          <div id="add-money-alert" class="alert hidden"></div>
-        </section>
-
-        <!-- ACTION 2: SEND MONEY (TRANSFER) -->
-        <section class="card action-card">
-          <div class="card-header">
-            <h3>🚀 Send Money</h3>
-            <p>Transfer money to another MiniPay user by email.</p>
-          </div>
-
-          <form id="send-money-form">
-            <div class="form-group">
-              <label for="send-to-email">Recipient Email</label>
-              <input type="email" id="send-to-email" placeholder="recipient@example.com" required autocomplete="off">
-            </div>
-
-            <div class="form-group">
-              <label for="send-amount-inr">Amount in Rupees (₹)</label>
-              <div class="input-prefix-wrapper">
-                <span class="input-prefix">₹</span>
-                <input type="number" id="send-amount-inr" placeholder="50.00" min="0.01" step="any" required>
-              </div>
-              <small class="helper-text">
-                Will be converted to <span id="send-paise-preview">0</span> paise before sending.
-              </small>
-            </div>
-
-            <!-- Idempotency Key Status -->
-            <div class="idempotency-badge-box">
-              <div class="idempotency-badge-header">
-                <span class="idempotency-icon">🛡️</span>
-                <span class="idempotency-title">Idempotency Protection</span>
-              </div>
-              <p class="idempotency-desc">
-                Protected by a unique <code>Idempotency-Key</code>. Retrying will never double-charge.
-              </p>
-              <div class="idempotency-key-display">
-                Key: <code id="display-idempotency-key">New key generated on submit</code>
-              </div>
-            </div>
-
-            <div class="send-buttons-group">
-              <button type="submit" id="send-money-submit-btn" class="btn btn-primary btn-block">
-                Transfer Money
-              </button>
-              <button type="button" id="retry-send-btn" class="btn btn-warning btn-block hidden">
-                ⚠️ Retry Transfer with Same Key
-              </button>
-            </div>
-          </form>
-          <div id="send-money-alert" class="alert hidden"></div>
-        </section>
       </div>
-
-      <!-- 3. TRANSACTION HISTORY SECTION -->
-      <section class="card history-card">
-        <div class="history-header">
-          <div>
-            <h3>📜 Transfer History</h3>
-            <p class="text-muted">Sent and received transfers, ordered newest first.</p>
-          </div>
-          <button id="refresh-history-btn" class="btn btn-outline btn-sm">Refresh History</button>
-        </div>
-
-        <div id="history-loading" class="loading-state hidden">Loading transfers...</div>
-        <div id="history-empty" class="empty-state hidden">
-          <span class="empty-icon">📭</span>
-          <h4>No transfers yet</h4>
-          <p>Send money to a friend or have someone transfer to your email to see activity here.</p>
-        </div>
-
-        <div class="table-responsive">
-          <table id="transactions-table" class="data-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Counterparty</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Date & Time</th>
-                <th>Idempotency Key</th>
-              </tr>
-            </thead>
-            <tbody id="transactions-list">
-              <!-- Dynamically populated rows -->
-            </tbody>
-          </table>
-        </div>
-      </section>
     </main>
 
     <!-- FOOTER -->
     <footer class="app-footer">
-      <p>MiniPay &copy; 2026 — Built with Node.js, Express, better-sqlite3 & Vanilla HTML/JS</p>
+      <p>MiniPay &mdash; Simplified Payment System</p>
     </footer>
   </div>
 
