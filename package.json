@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "node --test test/service.test.js test/api.test.js",
+    "test": "node --test test/service.test.js test/api.test.js test/transfer.test.js",
     "test:unit": "node --test test/service.test.js",
-    "test:e2e": "node --test test/api.test.js"
+    "test:e2e": "node --test test/api.test.js",
+    "test:transfer": "node --test test/transfer.test.js"
   },
   "keywords": [
     "payment",

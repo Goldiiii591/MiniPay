@@ -7,6 +7,7 @@
 const express = require('express');
 const authRoutes = require('./routes/authRoutes');
 const walletRoutes = require('./routes/walletRoutes');
+const transferRoutes = require('./routes/transferRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -22,6 +23,7 @@ app.get('/health', (req, res) => {
 // Mount routes
 app.use('/', authRoutes);
 app.use('/wallet', walletRoutes);
+app.use('/', transferRoutes);
 
 // 404 Route Not Found handler
 app.use((req, res) => {
