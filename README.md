@@ -1,5 +1,6 @@
 # MiniPay: a safe wallet-to-wallet payment system
 A production-grade, ledger-backed payment backend and client demonstrating ACID guarantees, idempotency, and double-entry accounting.
+![MiniPay dashboard](docs/screenshot.png)
 
 ## Why This Project
 Distributed networks are prone to timeouts and dropped packets, often causing clients to retry requests and double-charge users.
